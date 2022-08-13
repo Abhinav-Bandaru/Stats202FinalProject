@@ -91,3 +91,17 @@ hist(control_score_difference$PANSS_Total)
 A_T_Test <- rbind(control_score_difference,treatment_score_difference)
 aov(A_T_Test$PANSS_Total ~ A_T_Test$TxGroup)
 summary(aov(A_T_Test$PANSS_Total ~ A_T_Test$TxGroup))
+
+
+
+# Formatting the data for ANOVA
+final_df <- rbind(df_passed_control, df_passed_treatment)
+final_df <- final_df[,c(7,39)]
+
+# Plotting the Data
+boxplot(final_df$PANSS_Total ~ final_df$TxGroup)
+
+# Applying the test
+ANOVA <- aov(final_df$PANSS_Total ~ final_df$TxGroup)
+ANOVA
+summary(ANOVA)
