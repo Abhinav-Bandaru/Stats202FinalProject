@@ -48,9 +48,34 @@ write.table(Final_Predictions, file='......data.txt', sep=',',
             row.names = F)
 
 
+#
+#
+# Initial Approach
 
+i <- 1
+while(i<nrow(E)){
+  
+  # Separating every patient into a small data frame called more_than_one
+  
+  more_than_one <- data.frame(matrix(ncol = 32, nrow = 0))
+  colnames(more_than_one) <- colnames(E)[-c(1)]
+  if(E$PatientID[i]==E$PatientID[i+1]){
+    while(E$PatientID[i]==E$PatientID[i+1]){
+      each_patient <- E[i,-c(1)]
+      more_than_one[nrow(more_than_one) + 1,] <- each_patient
+      i <- i + 1
+      if(i>=nrow(E))
+        break
+    }
+  }
+  each_patient <- E[i,-c(1)]
+  more_than_one[nrow(more_than_one) + 1,] <- each_patient
+  i <- i + 1
+}
 #
 #
+
+
 #
 #
 # Statistical measures of the predictions of all the days in 18th week:
