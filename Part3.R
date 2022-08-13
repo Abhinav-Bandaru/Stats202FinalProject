@@ -46,3 +46,107 @@ Final_Predictions = data.frame(unique(E_dup$PatientID), Predicted_PANSS_Scores)
 colnames(Final_Predictions) <- c("PatientID", "PANSS_Total")
 write.table(Final_Predictions, file='......data.txt', sep=',',
             row.names = F)
+
+
+
+#
+#
+#
+#
+# Statistical measures of the predictions of all the days in 18th week:
+
+ans<-predict(model, data.frame(VisitDay=c(119, 120, 121, 122, 123, 124, 125)))
+answer <- answer + min(ans)
+
+#OR
+
+ans<-predict(model, data.frame(VisitDay=c(119, 120, 121, 122, 123, 124, 125)))
+answer <- answer + max(ans)
+
+#OR
+
+ans<-predict(model, data.frame(VisitDay=c(119, 120, 121, 122, 123, 124, 125)))
+answer <- answer + mean(ans)
+
+#OR
+
+ans<-predict(model, data.frame(VisitDay=c(119, 120, 121, 122, 123, 124, 125)))
+answer <- answer + median(ans)
+
+#
+#
+#
+
+
+# Converting VisitDays to Weeks:
+
+#.
+#.
+E$VisitDay <- ceiling(E$VisitDay/7)
+#.
+#.
+#.
+answer <- 0
+  for(j in 2:ncol(more_than_one)){
+    model <- lm(more_than_one[[colnames(more_than_one)[j]]]~VisitDay, data = more_than_one)
+    ans<-predict(model, data.frame(VisitDay=c(18)))
+    answer <- answer + ans
+  }
+  print(answer[[1]])
+  Predicted_PANSS_Scores <- c(Predicted_PANSS_Scores, answer[[1]])
+
+
+
+
+# Including Country and TxGroup as independent features:
+#.
+#.
+answer <- 0
+  for(j in 2:ncol(more_than_one)){
+    model <- lm(more_than_one[[colnames(more_than_one)[j]]]~VisitDay + Country_USA + Country_Russia + TxGroup, data = more_than_one)
+    ans<-predict(model, data.frame(VisitDay=c(18)))
+    answer <- answer + ans
+  }
+  print(answer[[1]])
+  Predicted_PANSS_Scores <- c(Predicted_PANSS_Scores, answer[[1]])
+#.
+#.
+#.
+
+
+#
+#
+#
+#
+# MODELS 
+#
+
+# Linear Regression
+
+model <- lm(patient2[[colnames(patient2)[i]]]~VisitDay, data = patient2)
+  ans<-predict(model, data.frame(VisitDay=c(120, 121, 122, 123, 124, 125, 126)))
+  print(ans)
+  answer <- answer + mean(ans)
+
+
+# Decision Tree Regression
+
+library(rpart)
+#.
+#.
+model <- rpart(more_than_one[[colnames(more_than_one)[j]]]~VisitDay, data = more_than_one)
+#.
+#.
+
+
+
+# Neural Networks
+
+library(neuralnet)
+#.
+#.
+nn <- neuralnet(more_than_one[[colnames(more_than_one)[j]]]~VisitDay, data = more_than_one, hidden = c(5, 3), linear.output = TRUE)
+ans <- compute(nn, data.frame(VisitDay=c(18)))
+answer <- answer + ans$net.result
+#.
+#.
